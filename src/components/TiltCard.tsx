@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, ReactNode } from "react";
+import { useRef, useState, ReactNode, useEffect } from "react";
 
 interface TiltCardProps {
   children: ReactNode;
@@ -11,9 +11,14 @@ export default function TiltCard({ children, className = "" }: TiltCardProps) {
   const cardRef = useRef<HTMLDivElement>(null);
   const [rotateX, setRotateX] = useState(0);
   const [rotateY, setRotateY] = useState(0);
+  const [isTouchDevice, setIsTouchDevice] = useState(false);
+
+  useEffect(() => {
+    setIsTouchDevice(window.matchMedia("(pointer: coarse)").matches);
+  }, []);
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!cardRef.current) return;
+    if (isTouchDevice || !cardRef.current) return;
     const rect = cardRef.current.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
@@ -24,6 +29,7 @@ export default function TiltCard({ children, className = "" }: TiltCardProps) {
   };
 
   const handleMouseLeave = () => {
+    if (isTouchDevice) return;
     setRotateX(0);
     setRotateY(0);
   };
@@ -34,7 +40,9 @@ export default function TiltCard({ children, className = "" }: TiltCardProps) {
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
       style={{
-        transform: `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`,
+        transform: isTouchDevice
+          ? "none"
+          : `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`,
         transition: "transform 0.1s ease-out",
       }}
       className={`transform-gpu ${className}`}

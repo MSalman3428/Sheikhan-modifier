@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Outfit, Space_Mono } from "next/font/google";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -21,6 +21,12 @@ export const metadata: Metadata = {
   description: "Hand-fabricated American muscle legends and tactical restomods.",
 };
 
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+};
+
 export default function RootLayout({
   children,
 }: {
@@ -28,7 +34,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={`${outfit.variable} ${spaceMono.variable}`}>
-      <body className="min-h-screen flex flex-col selection:bg-[var(--theme-accent)] selection:text-black">
+      <body className="min-h-screen flex flex-col selection:bg-[var(--theme-accent)] selection:text-black overflow-x-hidden">
         <ThemeProvider>
           <Navbar />
           <main className="flex-grow pt-20">{children}</main>
